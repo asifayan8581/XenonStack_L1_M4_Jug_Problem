@@ -4,6 +4,8 @@ def bfs_solve(jug1_capacity, jug2_capacity, target_amount):
     initial_state = (0, 0, [])
     queue = deque([initial_state])
     visited_states = set()
+    
+   
 
     while queue:
         current_state = queue.popleft()
@@ -16,12 +18,13 @@ def bfs_solve(jug1_capacity, jug2_capacity, target_amount):
         visited_states.add((current_state[0], current_state[1]))
 
         # Fill small jug
-        fill_small_jug = (jug1_capacity, current_state[1], current_state[2] + ["Fill Small Jug"])
+        fill_small_jug = (jug1_capacity, current_state[1], current_state[2] + [f"Fill Small Jug: {jug1_capacity},{current_state[1]}"])
+        #print(f"{jug1_capacity},{current_state[1]}")
         if fill_small_jug[:2] not in visited_states:
             queue.append(fill_small_jug)
 
         # Fill large jug
-        fill_large_jug = (current_state[0], jug2_capacity, current_state[2] + ["Fill Large Jug"])
+        fill_large_jug = (current_state[0], jug2_capacity, current_state[2] + [f"Fill Large Jug: {current_state[0]},{jug2_capacity}"])
         if fill_large_jug[:2] not in visited_states:
             queue.append(fill_large_jug)
 
@@ -39,7 +42,8 @@ def bfs_solve(jug1_capacity, jug2_capacity, target_amount):
         pour_small_to_large = (
             max(0, current_state[0] - (jug2_capacity - current_state[1])),
             min(jug2_capacity, current_state[1] + current_state[0]),
-            current_state[2] + [f"Pour Small to Large Jug ({min(current_state[0], jug2_capacity - current_state[1])} gallons)"]
+            current_state[2] + [f"Pour ({min(current_state[0], jug2_capacity - current_state[1])} gallons) from Small to Large Jug ({max(0, current_state[0] - (jug2_capacity - current_state[1]))}\
+,{min(jug2_capacity, current_state[1] + current_state[0])})"]
         )
         if pour_small_to_large[:2] not in visited_states:
             queue.append(pour_small_to_large)
@@ -61,9 +65,13 @@ def print_operations(operations):
         print(operation)
 
 # Get user input
-jug1_capacity = int(input("Enter the capacity of the first jug: "))
-jug2_capacity = int(input("Enter the capacity of the second jug: "))
+jug1 = int(input("Enter the capacity of the first jug: "))
+jug2 = int(input("Enter the capacity of the second jug: "))
 target = int(input("Enter the target amount of water to be left in the larger jug: "))
+jug1_capacity = min(jug1,jug2)
+jug2_capacity = max(jug1,jug2)
+print(f"Small jug Capacity: {jug1_capacity}, large jug capacity: {jug2_capacity}")
+
 
 # Solve using BFS and print operations with gallon amount
 if bfs_solve(jug1_capacity, jug2_capacity, target):
